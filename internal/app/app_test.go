@@ -22,7 +22,6 @@ func TestRunShutdown(t *testing.T) {
 
 	app, err := New(cfg)
 	assert.NoError(t, err)
-
 	errchan := make(chan error, 1)
 
 	shutdown := func() {

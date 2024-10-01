@@ -1,9 +1,5 @@
 package config
 
-import (
-	"time"
-)
-
 // Environment variables validated automatically.
 var (
 	environment = [...]string{
@@ -48,15 +44,13 @@ type Config struct {
 }
 type (
 	Logger struct {
-		SyncTimeout time.Duration `mapstructure:"SyncTimeout"`
-		Cores       []LoggerCore  `mapstructure:"Cores"`
+		Writers []LogWriter `mapstructure:"Writers"`
 	}
-	LoggerCore struct {
-		Name           string    `mapstructure:"Name"`
-		EncoderLevel   string    `mapstructure:"EncoderLevel"` // production or development.
-		Path           EnvString `mapstructure:"Path"`
-		Level          int8      `mapstructure:"Level"` // might be negative.
-		MustCreateCore bool      `mapstructure:"MustCreateCore"`
+	LogWriter struct {
+		Dst        EnvString `mapstructure:"Dst"`
+		Type       string    `mapstructure:"Type"`
+		Level      int8      `mapstructure:"Level"` // might be negative.
+		MustCreate bool      `mapstructure:"MustCreate"`
 	}
 	Controller struct {
 		GRPCServer `mapstructure:"GRPCServer"`
@@ -70,7 +64,8 @@ type (
 	}
 )
 
-// # Get reads from CONFIG_FILE and returns
+// Get reads from CONFIG_FILE.
+// Return config or zero value config and error.
 func Get() (Config, error) {
 	err := initConfig()
 	if err != nil {

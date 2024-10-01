@@ -30,3 +30,10 @@ func MsgValue(err NotSpecifiedError, msg string, v any) error {
 
 	return errors.Join(err, errors.New(formatted))
 }
+
+// Value adds value to generic error.
+func Value(err NotSpecifiedError, v any) error {
+	formatted := fmt.Sprintf("%v", v)
+
+	return errors.Join(err, errors.New(formatted))
+}
