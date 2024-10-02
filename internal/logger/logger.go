@@ -1,12 +1,12 @@
 package logger
 
 import (
-	"context"
 	"cybertask/config"
 	"cybertask/pkg/errspec"
 	"errors"
 	"io"
 	"os"
+	"strconv"
 
 	"github.com/rs/zerolog"
 )
@@ -27,9 +27,7 @@ const (
 	TYPE_GRPC_SINGLE = "grpcsingle"
 )
 const (
-	_TRY_CLOSE_WRITERS                = false
-	_TRY_CREATE_DIRECTORY             = true
-	_TRY_CREATE_DIRECTORY_PERMISSIONS = 0o644
+	_DefaultPermissions = 0o644
 )
 
 // Logger is an abstraction over logger.
@@ -38,11 +36,9 @@ type Logger struct {
 }
 
 // Logger constructor. If config.Writers are missing returns [ZeroValueStderr].
-//
-// Stages:
 func New(cfg config.Logger, writers ...io.Writer) (*Logger, error) {
 
-	if len(cfg.Writers) == 0 {
+	if (len(cfg.Writers) == 0) && (len(writers) == 0) {
 		return ZeroValueStderr(), nil
 	}
 
@@ -50,11 +46,8 @@ func New(cfg config.Logger, writers ...io.Writer) (*Logger, error) {
 		lvlw, err := buildLevelWriter(w)
 		if err != nil {
 			if w.MustCreate {
-				err = errors.Join(err, ErrRequiredWriterConstructionFailed)
 
-				if _TRY_CLOSE_WRITERS {
-					tryCloseWriters(writers)
-				}
+				err = errors.Join(err, ErrRequiredWriterConstructionFailed)
 
 				return nil, errspec.Value(err, w)
 			}
@@ -96,38 +89,45 @@ func ZeroValueStderr() *Logger {
 	}
 }
 
-func buildLevelWriter(w config.LogWriter) (zerolog.LevelWriter, error) {
-	switch w.Type {
+func buildLevelWriter(cfg config.LogWriter) (*levelWriter, error) {
+
+	// Validation.
+	if cfg.Level < -1 || cfg.Level > 5 {
+		return nil, errspec.Msg(ErrUnsupportedLoggingLevel, strconv.Itoa(int(cfg.Level)))
+	}
+
+	switch cfg.Type {
 	case TYPE_FILE:
-		return buildFile(w)
+		return buildFile(cfg)
 	case TYPE_HTTP_SINGLE:
-		return buildSingleHTTP(w)
+		return buildSingleHTTP(cfg)
 	case TYPE_GRPC_SINGLE, TYPE_GRPC_STREAM, TYPE_KAFKA_TOPIC, TYPE_WEBSOCKET:
-		return nil, errspec.Msg(ErrUnsupportedType, w.Type)
+		return nil, errspec.Msg(ErrUnsupportedType, cfg.Type)
 	default:
-		return nil, errspec.Msg(ErrUnknownType, w.Type)
+		return nil, errspec.Msg(ErrUnknownType, cfg.Type)
 	}
 }
 
-func buildFile(w config.LogWriter) (zerolog.LevelWriter, error) {
-	os.OpenFile(string(w.Dst))
+func buildSingleHTTP(cfg config.LogWriter) (*levelWriter, error) {
 
+	w, err := newHTTPSingleWriter(string(cfg.Dst))
+	if err != nil {
+		return nil, err
+	}
+
+	return newLvlWriter(w, zerolog.Level(cfg.Level)), nil
 }
 
-func tryCloseWriters(writers []io.Writer) {
-	defer func() {
-		_ = recover()
-	}()
-	for _, w := range writers {
-		switch closer := w.(type) {
-		case io.Closer:
-			_ = closer.Close()
-		case interface{ Close() }:
-			closer.Close()
-		case interface{ Close(context.Context) error }:
-			_ = closer.Close(context.Background())
-		case interface{ Close(context.Context) }:
-			closer.Close(context.Background())
-		}
+func buildFile(cfg config.LogWriter) (*levelWriter, error) {
+	_, err := os.Stat(string(cfg.Dst))
+	if err != nil {
+		return nil, err
 	}
+	f, err := os.OpenFile(string(cfg.Dst), os.O_RDWR, os.ModeAppend)
+	if err != nil {
+		return nil, err
+	}
+
+	return newLvlWriter(f, zerolog.Level(cfg.Level)), nil
+
 }

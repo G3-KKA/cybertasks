@@ -7,4 +7,5 @@ var (
 	ErrNoWritersWasConstructed          = errors.New("no writers was constructed")
 	ErrUnsupportedType                  = errors.New("type is correct but not supported yet")
 	ErrUnknownType                      = errors.New("unknown type")
+	ErrUnsupportedLoggingLevel          = errors.New("unsupported log level")
 )

@@ -1,9 +1,8 @@
 package app
 
 import (
+	"cybertask/config"
 	"cybertask/internal/logger"
-	"io"
-	"os"
 )
 
 // App represents whole aplication.
@@ -13,7 +12,7 @@ type App struct {
 // App constructor.
 //
 // Stages:
-func New(io.Writer) (*App, error) {
-	l, err := logger.New(os.Stderr)
+func New(cfg config.Config) (*App, error) {
+	l, err := logger.New(cfg.L)
 
 }
