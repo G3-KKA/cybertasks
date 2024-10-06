@@ -1,0 +1,204 @@
+basePath: /
+definitions:
+  handler.CreateTaskRequest:
+    properties:
+      task:
+        $ref: '#/definitions/model.Task'
+    type: object
+  handler.CreateTaskResponse:
+    properties:
+      msg:
+        type: string
+    type: object
+  handler.DeleteTaskRequest:
+    type: object
+  handler.DeleteTaskResponse:
+    properties:
+      msg:
+        type: string
+    type: object
+  handler.GetTaskRequest:
+    type: object
+  handler.GetTaskResponse:
+    properties:
+      task:
+        $ref: '#/definitions/model.Task'
+    type: object
+  handler.TaskError:
+    properties:
+      msg:
+        type: string
+    type: object
+  handler.UpdateTaskRequest:
+    properties:
+      task:
+        $ref: '#/definitions/model.Task'
+    type: object
+  handler.UpdateTaskResponse:
+    properties:
+      msg:
+        type: string
+    type: object
+  model.Task:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      header:
+        maxLength: 255
+        minLength: 1
+        type: string
+      id:
+        type: integer
+      status:
+        type: boolean
+    required:
+    - created_at
+    type: object
+host: :7730
+info:
+  contact: {}
+  description: Tasks and swagger api.
+  title: Cybertask API
+  version: 0.1.0
+paths:
+  /task:
+    post:
+      consumes:
+      - application/json
+      description: Create provided in body.
+      operationId: create
+      parameters:
+      - description: create task
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.CreateTaskResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+      summary: Create task.
+      tags:
+      - task
+    put:
+      consumes:
+      - application/json
+      description: Update task via replacing it with provided task in body.
+      operationId: upadte
+      parameters:
+      - description: update task
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.UpdateTaskResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+      summary: Update task.
+      tags:
+      - task
+  /task/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete task if exist with ID provided in query params.
+      operationId: delete
+      parameters:
+      - description: delete task
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.DeleteTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.DeleteTaskResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+      summary: Delete task.
+      tags:
+      - task
+    get:
+      consumes:
+      - application/json
+      description: Get task if exist with ID provided in query params.
+      operationId: get
+      parameters:
+      - description: get task
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.GetTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.GetTaskResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+      summary: Get task.
+      tags:
+      - task
+swagger: "2.0"
