@@ -1,0 +1,30 @@
+Logger:
+    #SyncTimeout: 1s 
+    Writers:
+      - Dst: /dev/stderr
+        Type: file
+        Level: -1
+        MustCreate: true
+      - Dst: ${WORKSPACE}/tmp/log.txt
+        Type: file
+        Level: -1
+        MustCreate: true
+Controller:
+  HTTPServer:
+    Address: "0.0.0.0:7730"
+Database:
+  User: taskuser
+  Address: postgres1
+  Port: '5432'
+  Dbname: taskdb
+TaskMetrics:
+  ConnectionReties: 1
+  RetryAfter: 1s
+  PerServiceTableSize: 1000
+  ExtServices:
+    - Name: ext1
+      Autoupdate: 1s
+      Address: 'ext1:7731'
+    - Name: ext2
+      Autoupdate: 2s
+      Address: 'ext2:7732'
