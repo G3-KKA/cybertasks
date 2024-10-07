@@ -25,7 +25,7 @@ type service struct {
 func (srvc *service) newtask() {
 	srvc.mx.Lock()
 	hdr := rdata.FirstName(-1) + rdata.Address() + "visit"
-	id := uuid.New().String()
+	id := uuid.New()
 	tsk := model.Task{
 		Id:          id,
 		Header:      hdr,
@@ -96,7 +96,8 @@ func (srvc *service) UpdateTaskStatus(ctx context.Context, req *extservice.Updat
 	}
 	srvc.errcounter.Add(1)
 
-	if _, ok := srvc.tasks[req.GetId()]; !ok {
+	uid := uuid.MustParse(req.GetId())
+	if _, ok := srvc.tasks[uid]; !ok {
 		rsp := &extservice.UpdateTaskStatusResponse{
 			Rsp: &extservice.UpdateTaskStatusResponse_Err{
 				Err: &extservice.Error{
@@ -108,7 +109,7 @@ func (srvc *service) UpdateTaskStatus(ctx context.Context, req *extservice.Updat
 		return rsp, ErrTaskNotExist
 	}
 
-	srvc.tasks[req.GetId()].Status = req.GetStatus()
+	srvc.tasks[uid].Status = req.GetStatus()
 
 	rsp := &extservice.UpdateTaskStatusResponse{
 		Rsp: &extservice.UpdateTaskStatusResponse_Msg{

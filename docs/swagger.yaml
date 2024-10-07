@@ -50,7 +50,7 @@ definitions:
         minLength: 1
         type: string
       id:
-        type: integer
+        type: string
       status:
         type: boolean
     required:
@@ -133,40 +133,6 @@ paths:
       tags:
       - task
   /task/:id:
-    delete:
-      consumes:
-      - application/json
-      description: Delete task if exist with ID provided in query params.
-      operationId: delete
-      parameters:
-      - description: delete task
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/handler.DeleteTaskRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handler.DeleteTaskResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handler.TaskError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/handler.TaskError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handler.TaskError'
-      summary: Delete task.
-      tags:
-      - task
     get:
       consumes:
       - application/json
@@ -199,6 +165,41 @@ paths:
           schema:
             $ref: '#/definitions/handler.TaskError'
       summary: Get task.
+      tags:
+      - task
+  /task/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete task if exist with ID provided in query params.
+      operationId: delete
+      parameters:
+      - description: delete task
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.DeleteTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.DeleteTaskResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.TaskError'
+      summary: Delete task.
       tags:
       - task
 swagger: "2.0"

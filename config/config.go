@@ -1,5 +1,10 @@
 package config
 
+import (
+	"log"
+	"time"
+)
+
 // Environment variables validated automatically.
 var (
 	environment = [...]string{
@@ -7,6 +12,7 @@ var (
 		// Removing this will break every env-based path in service.
 		"WORKSPACE",
 		"CONFIG_FILE",
+		"PG_PASSWORD",
 	}
 
 	// Other viper options.
@@ -39,8 +45,10 @@ type EnvString string
 
 // Represents expected contents of configuration file.
 type Config struct {
-	L Logger     `mapstructure:"Logger"`
-	C Controller `mapstructure:"Controller"`
+	L  Logger      `mapstructure:"Logger"`
+	C  Controller  `mapstructure:"Controller"`
+	DB Database    `mapstructure:"Database"`
+	TM TaskMetrics `mapstructure:"TaskMetrics"`
 }
 type (
 	Logger struct {
@@ -53,14 +61,31 @@ type (
 		MustCreate bool      `mapstructure:"MustCreate"`
 	}
 	Controller struct {
-		GRPCServer `mapstructure:"GRPCServer"`
+		//GRPCServer `mapstructure:"GRPCServer"`
 		HTTPServer `mapstructure:"HTTPServer"`
 	}
-	GRPCServer struct {
+	/* 	GRPCServer struct {
 		Address string `mapstructure:"Address"`
-	}
+	} */
 	HTTPServer struct {
 		Address string `mapstructure:"Address"`
+	}
+	Database struct {
+		User    string `mapstructure:"User"`
+		Address string `mapstructure:"Address"`
+		Port    string `mapstructure:"Port"`
+		Dbname  string `mapstructure:"Dbname"`
+	}
+	TaskMetrics struct {
+		ConnectionReties    uint          `mapstructure:"ConnectionReties"`
+		RetryAfter          time.Duration `mapstructure:"RetryAfter"`
+		PerServiceTableSize uint          `mapstructure:"PerServiceTableSize"`
+		ExtServices         []ExtService  `mapstructure:"ExtServices"`
+	}
+	ExtService struct {
+		Name       string        `mapstructure:"Name"`
+		Autoupdate time.Duration `mapstructure:"Autoupdate"`
+		Address    string        `mapstructure:"Address"`
 	}
 )
 
@@ -73,4 +98,15 @@ func Get() (Config, error) {
 	}
 
 	return c, nil
+}
+
+// MustGet reads from CONFIG_FILE.
+// Return config or panics, if any error happened.
+func MustGet() Config {
+	cfg, err := Get()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return cfg
 }

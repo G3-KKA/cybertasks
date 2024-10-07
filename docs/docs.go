@@ -170,7 +170,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/task/{id}": {
             "delete": {
                 "description": "Delete task if exist with ID provided in query params.",
                 "consumes": [
@@ -305,7 +307,7 @@ const docTemplate = `{
                     "minLength": 1
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "status": {
                     "type": "boolean"

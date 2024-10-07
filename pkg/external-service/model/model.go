@@ -2,10 +2,12 @@ package model
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type (
-	TaskID      = string
+	TaskID      = uuid.UUID
 	TaskHeader  = string
 	TaskDesc    = string
 	TaskCreated = time.Time

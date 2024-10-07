@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+// protoc --go_out=../api/ + go_package = ./controller == ../api/controller
+
+// protoc --go_out=__PATH__ --go-grpc_out=__PATH__ ./__PROTOFILE__
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./tmetrics";
+
+message Error {
+    string msg =1;
+}
+message Tasks { 
+    repeated Task data      =1;
+}
+message Task {
+    string                      id              =1;
+    string                      header          =2;
+    string                      description     =3;
+    google.protobuf.Timestamp   created_at      =4;
+    bool                        status          =5; 
+}
+
+message GetTasksRequest {
+    int64  dummy    = 1;
+}
+message GetTasksResponse {
+    oneof  rsp{
+        Tasks tasks     =1;
+        Error err       =2;
+    };
+}
+message UpdateTaskStatusRequest{
+    string  id        =1;
+    bool    status      =2;
+}
+message UpdateTaskStatusResponse{
+    oneof rsp{
+        string  msg     =1;
+        Error   err     =2;
+    };
+}
+
+
+service TaskService {
+    rpc GetTasks (GetTasksRequest) returns (GetTasksResponse) {}
+    rpc UpdateTaskStatus (UpdateTaskStatusRequest) returns (UpdateTaskStatusResponse){}
+}

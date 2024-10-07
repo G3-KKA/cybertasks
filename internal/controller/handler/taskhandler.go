@@ -4,10 +4,10 @@ import (
 	"context"
 	"cybertask/internal/logger"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 )
 
 const (
@@ -144,14 +144,15 @@ func (h *taskhandler) Create(gctx *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param		request body DeleteTaskRequest true "delete task"
+// @Param 		id 		path string 		   true "identifier"
 // @Success     200 {object} DeleteTaskResponse
 // @Failure     400 {object} TaskError
 // @Failure     404 {object} TaskError
 // @Failure     500 {object} TaskError
-// @Router      /task/:id [DELETE]
+// @Router      /task/{id} [DELETE]
 func (h *taskhandler) Delete(gctx *gin.Context) {
 
-	id, err := strconv.ParseUint(gctx.Params.ByName("id"), 10, 64)
+	id, err := uuid.Parse(gctx.Params.ByName("id"))
 
 	if err != nil {
 		h.l.Err(ErrIncorrectID).Err(err).Send()
@@ -185,6 +186,7 @@ func (h *taskhandler) Delete(gctx *gin.Context) {
 // @Tags  	    task
 // @Accept      json
 // @Produce     json
+// @Param 		id 		path string 		true "identifier"
 // @Param		request body GetTaskRequest true "get task"
 // @Success     200 {object} GetTaskResponse
 // @Failure     400 {object} TaskError
@@ -193,7 +195,7 @@ func (h *taskhandler) Delete(gctx *gin.Context) {
 // @Router      /task/:id [GET]
 func (h *taskhandler) Get(gctx *gin.Context) {
 
-	id, err := strconv.ParseUint(gctx.Params.ByName("id"), 10, 64)
+	id, err := uuid.Parse(gctx.Params.ByName("id"))
 
 	if err != nil {
 		h.l.Err(ErrIncorrectID).Err(err).Send()

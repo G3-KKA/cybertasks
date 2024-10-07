@@ -2,10 +2,12 @@ package model
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type (
-	TaskID      = uint64
+	TaskID      = uuid.UUID
 	TaskHeader  = string
 	TaskDesc    = string
 	TaskCreated = time.Time
@@ -13,9 +15,9 @@ type (
 )
 
 type Task struct {
-	ID          TaskID      `json:"id"`
+	ID          TaskID      `json:"id" `
 	Header      TaskHeader  `json:"header" validate:"min=1,max=255"`
-	Description TaskDesc    `json:"description,omitempty"`
-	CreatedAt   TaskCreated `json:"created_at" validate:"required"`
+	Description TaskDesc    `json:"description,omitempty"  bun:",nullzero"`
+	CreatedAt   TaskCreated `json:"created_at" validate:"required" bun:"created_at"`
 	Status      TaskStatus  `json:"status"`
 }

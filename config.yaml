@@ -1,27 +1,30 @@
 Logger:
-    SyncTimeout: 1s 
-    Cores:
-      - Name : stderr
-        EncoderLevel: production
-        Path: /dev/stderr
-        Level : 0 # info
-        MustCreateCore: false
-      - Name : logfile
-        EncoderLevel: production
-        Path: "${WORKSPACE}/tmp/log.log"
-        Level : -1 # debug
-        MustCreateCore: true
+    #SyncTimeout: 1s 
+    Writers:
+      - Dst: /dev/stderr
+        Type: file
+        Level: -1
+        MustCreate: true
+      - Dst: ${WORKSPACE}/tmp/log.txt
+        Type: file
+        Level: -1
+        MustCreate: true
 Controller:
-  GRPCServer:
-    Address: "localhost:7731"
   HTTPServer:
-    Address: "localhost:7730"
-#Broker:
-#    Addresses:
-#      - localhost:9092
-#      - localhost:9093
-#    BatchSize: 1000
-#    Offset: -1 # sarama.OffsetNewest
-#    Topic: "test"
-#    BatchProvider:
-#      PreallocSize: 20
+    Address: "0.0.0.0:7730"
+Database:
+  User: taskuser
+  Address: postgres1
+  Port: '5432'
+  Dbname: taskdb
+TaskMetrics:
+  ConnectionReties: 1
+  RetryAfter: 1s
+  PerServiceTableSize: 1000
+  ExtServices:
+    - Name: ext1
+      Autoupdate: 1s
+      Address: 'ext1:7731'
+    - Name: ext2
+      Autoupdate: 2s
+      Address: 'ext2:7732'

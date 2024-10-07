@@ -3,6 +3,7 @@ package main
 import (
 	"extservice/internal/extservice"
 	"extservice/model"
+	"log"
 	"net"
 	"sync"
 	"sync/atomic"
@@ -24,14 +25,14 @@ func main() {
 	viper.MustBindEnv("EXT_SERVICE_ADDR")
 	addr := viper.GetString("EXT_SERVICE_ADDR")
 	if addr == "" {
-		panic("addr nil")
+		log.Fatal("addr nil")
 	}
 
 	//
 	//
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	//
@@ -59,6 +60,6 @@ func main() {
 	//
 	err = server.Serve(lis)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }

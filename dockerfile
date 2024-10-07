@@ -10,7 +10,7 @@ RUN apk add bash
 
 RUN go mod tidy
 
-RUN bash -c "go build -o ./bin/ext ./cmd/*.go"
+RUN bash -c "go build -o ./bin/cybertask ./cmd/main.go"
 
 FROM alpine:3.20 AS runner
 
@@ -18,6 +18,10 @@ ARG DOCKER_WORKDIR=/app
 
 WORKDIR ${DOCKER_WORKDIR}
 
-COPY --from=builder ${DOCKER_WORKDIR}/bin/ext ./bin/
+COPY --from=builder ${DOCKER_WORKDIR}/bin/cybertask ./bin/
 
-CMD ./bin/ext 
+ENV WORKDIR ${DOCKER_WORKDIR}
+
+ENV CONFIG_FILE ${WORKDIR}/config.yaml
+
+CMD ./bin/cybertask 

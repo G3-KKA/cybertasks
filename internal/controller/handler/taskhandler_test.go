@@ -9,19 +9,19 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"strconv"
 	"testing"
 	"time"
 
 	"github.com/bytedance/sonic"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
 var _happyPathTask = model.Task{
-	ID:          22,
+	ID:          uuid.New(),
 	Header:      "hdr",
 	Description: "",
 	CreatedAt:   time.Now(),
@@ -45,7 +45,8 @@ func TestGetHappyPath(t *testing.T) {
 		gctx.Params,
 		gin.Param{
 			Key:   "id",
-			Value: strconv.Itoa(int(_happyPathTask.ID))},
+			Value: _happyPathTask.ID.String(),
+		},
 	)
 
 	tlogger := logger.NewTesting(t)
@@ -90,7 +91,7 @@ func TestUpdateHappyPath(t *testing.T) {
 	t.Parallel()
 
 	_happyPathTask := model.Task{
-		ID:          22,
+		ID:          uuid.New(),
 		Header:      "hdr",
 		Description: "",
 		CreatedAt:   time.Now(),
@@ -151,7 +152,7 @@ func TestCreateHappyPath(t *testing.T) {
 	t.Parallel()
 
 	_happyPathTask := model.Task{
-		ID:          22,
+		ID:          uuid.New(),
 		Header:      "hdr",
 		Description: "",
 		CreatedAt:   time.Now(),
@@ -213,7 +214,7 @@ func TestDeleteHappyPath(t *testing.T) {
 	t.Parallel()
 
 	_happyPathTask := model.Task{
-		ID:          22,
+		ID:          uuid.New(),
 		Header:      "hdr",
 		Description: "",
 		CreatedAt:   time.Now(),
@@ -234,7 +235,7 @@ func TestDeleteHappyPath(t *testing.T) {
 		gctx.Params,
 		gin.Param{
 			Key:   "id",
-			Value: strconv.Itoa(int(_happyPathTask.ID))},
+			Value: _happyPathTask.ID.String()},
 	)
 
 	tlogger := logger.NewTesting(t)
