@@ -4,7 +4,7 @@
 
 # Running.
 
-still in progress!
+make compose-run
 
 ---
 
