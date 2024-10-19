@@ -1,4 +1,4 @@
 CREATE USER taskuser
-    WITH LOGIN
+    -- WITH LOGIN impicit -- 
     PASSWORD 'taskpass'
 ;
