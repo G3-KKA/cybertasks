@@ -108,7 +108,7 @@ func (h *taskhandler) Create(gctx *gin.Context) {
 		return
 	}
 
-	validate := validator.New()
+	validate := validator.New() // should be used as singleton.
 
 	err = validate.Struct(req)
 	if err != nil {
